@@ -500,11 +500,14 @@ pyrightconfig.json
 
 # ==============================
 # backend -> Django / Python 관련
+# ==============================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 *.db
 *.sqlite3
+*.crt
+*.key
 venv/
 .env

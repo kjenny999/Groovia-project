@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .spotify_client import get_track_metadata
+from .feature_extractor import extract_features
+from .feature_extractor_embedding import extract_features_with_embedding
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -95,3 +97,33 @@ class PingSpotifyView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class FeatureExtractView(APIView):
+    """ 기본 Mega Extractor """
+    def get(self, request):
+        token = request.GET.get("token")
+        track_id = request.GET.get("track_id")
+
+        metadata = get_track_metadata(track_id, token)
+        features = extract_features(metadata)
+
+        return Response({
+            "success": True,
+            "mode": "basic",
+            "features": features
+        })
+
+
+class FeatureExtractEmbeddingView(APIView):
+    """ 임베딩 포함 Mega Extractor """
+    def get(self, request):
+        token = request.GET.get("token")
+        track_id = request.GET.get("track_id")
+
+        metadata = get_track_metadata(track_id, token)
+        features = extract_features_with_embedding(metadata)
+
+        return Response({
+            "success": True,
+            "mode": "embedding",
+            "features": features
+        })
