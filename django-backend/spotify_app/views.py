@@ -96,6 +96,9 @@ class PingSpotifyView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class PingView(APIView):
+    def get(self, request):
+        return Response({"message": "pong"})
 
 class FeatureExtractView(APIView):
     """ 기본 Mega Extractor """
@@ -127,3 +130,34 @@ class FeatureExtractEmbeddingView(APIView):
             "mode": "embedding",
             "features": features
         })
+
+class UrlProcessView(APIView):
+    """
+    Flutter에서 보낸 URL 리스트를 받아 처리하는 API
+    Method: POST
+    """
+    def post(self, request):
+        # 1. Flutter에서 보낸 데이터 받기
+        # 예: {"urls": ["https://open.spotify.com/track/...", "https://..."]}
+        input_urls = request.data.get('urls', [])
+
+        if not input_urls:
+            return Response(
+                {"error": "URL 리스트가 비어있습니다."}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        processed_results = []
+
+        # 2. URL 처리 로직
+        for url in input_urls:
+            # 예시: 단순 수신 확인 (나중에 여기에 Spotify ID 추출 로직 등을 넣으면 됩니다)
+            result_data = {
+                "original_url": url,
+                "status": "success",
+                "message": "URL을 정상적으로 수신했습니다."
+            }
+            processed_results.append(result_data)
+
+        # 3. 결과 반환
+        return Response({"results": processed_results}, status=status.HTTP_200_OK)
